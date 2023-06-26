@@ -11,6 +11,24 @@ pipeline{
                 bat 'mvn test'
             }
         }
+        stage ('Sonar Analysis'){
+            environment{
+                scannerHome = tool 'SONAR_SCANNER'
+            }
+            steps{
+                withSonarQubeEnv('SONAR_LOCAL'){
+                bat "${scannerHome}/bin/sonar-scanner -e -Dsonar.projectKey=DeployBack -Dsonar.host.url=http://localhost:9000 -Dsonar.login=4f635edf914ba363985a95bdf08e7a342f15ea32 -Dsonar.java.binaries=target -Dsonar.coverage.exclusions=**/.mvn/**,**src/test/**,**/model/**,**Application.java"
+                }
+            }
+        }
+        stage ('Quality Gate'){
+            steps{
+                sleep(30)
+                timeout(time: 1, unit: 'MINUTES'){
+                    waitForQualityGate abortPipeline: true
+                }
+            }            
+        }  
         stage ('Deploy Backend'){
             steps{
                 deploy adapters: [tomcat8(credentialsId: 'TomcatLogin', path: '', url: 'http://localhost:8001/')], contextPath: 'tasks-backend', war: 'target\\tasks-backend.war'
@@ -33,14 +51,14 @@ pipeline{
                 }
             }
         } 
-        //stage ('Funcional Test'){
-            //steps{
-               // dir('funcional Test'){
-                   // git credentialsId: 'login_github', url: 'https://github.com/Hugosanches1/tasks-funciona-testes'
+        stage ('Funcional Test'){
+            steps{
+                dir('funcional Test'){
+                    //git credentialsId: 'login_github', url: 'https://github.com/Hugosanches1/tasks-funciona-testes'
                     //bat 'mvn test'
-                //}
-            //}
-        //}  
+                }
+            }
+        }  
         stage ('Deploy Prod') {
             steps{
                 bat 'docker-compose build'
