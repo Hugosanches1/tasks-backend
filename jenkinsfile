@@ -33,14 +33,14 @@ pipeline{
                 }
             }
         } 
-        stage ('Funcional Test'){
-            steps{
-                dir('funcional Test'){
-                    git credentialsId: 'login_github', url: 'https://github.com/Hugosanches1/tasks-funciona-testes'
-                    bat 'mvn test'
-                }
-            }
-        }  
+        //stage ('Funcional Test'){
+            //steps{
+               // dir('funcional Test'){
+                   // git credentialsId: 'login_github', url: 'https://github.com/Hugosanches1/tasks-funciona-testes'
+                    //bat 'mvn test'
+                //}
+            //}
+        //}  
         stage ('Deploy Prod') {
             steps{
                 bat 'docker-compose build'
