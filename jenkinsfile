@@ -54,8 +54,8 @@ pipeline{
         stage ('Funcional Test'){
             steps{
                 dir('funcional Test'){
-                    //git credentialsId: 'login_github', url: 'https://github.com/Hugosanches1/tasks-funciona-testes'
-                    //bat 'mvn test'
+                    git credentialsId: 'login_github', url: 'https://github.com/Hugosanches1/tasks-funciona-testes'
+                    bat 'mvn test'
                 }
             }
         }  
